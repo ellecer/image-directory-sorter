@@ -1,0 +1,68 @@
+
+
+cd photo_upload; jhead -n%Y%m%d-%H%M%S *.JPG; cd ..;
+
+================================
+
+to rename everything under G:\photos_upload\ (traverse subdirs)
+
+G:\photos_upload>jhead -n%Y%m%d-%H%M%S G:\photos_upload\**\*.jpg
+
+===============================
+
+to change exif time by +/- (n) hours -- ie, daylight saving, and forgot to adjust camera clock, or in diff. time zone
+
+
+Change time up or down a few hours
+COMMAND: jhead -ta<+|->[timediff] {filename}
+EXAMPLE (up three hours): jhead -ta+3:00 *
+
+move ahead by 1 hr:
+
+jhead -ta+1:00 *
+
+
+move back by 1 hr:
+
+jhead -ta-1:00 *
+
+move jpg files forward by 1 day (24 hrs):
+
+jhead -ta+24 *.jpg
+
+
+
+===============================
+
+
+Change all JPEG files in a folder to a new date
+COMMAND: jhead -da[newdate]-[olddate] {filename}
+EXAMPLE (from 2005 to 2007): jhead -da2007:03:25-2005:03:25 *
+
+
+===============================
+
+To change file timestamps of non-JPEG files:
+
+to modify movie files *.MOV by adding a day:
+
+for i in *.MOV; do gtouch -r "$i" -d "+1 day" "$i"; done
+
+
+to change backwards by 1 hour:
+
+for i in *.MOV; do gtouch -r "$i" -d "-1 hour" "$i"; done
+
+
+forward by 8 hours:
+
+for i in *.MOV; do gtouch -r "$i" -d "+8 hours" "$i"; done
+
+
+PREREQ:
+Macports is installed, and coreutils installed
+
+sudo port -d sync
+sudo port selfupdate
+sudo port install coreutils
+
