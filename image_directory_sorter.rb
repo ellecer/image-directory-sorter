@@ -70,33 +70,43 @@ Dir.chdir(target_directory)do
       if image_file =~ /.jpg$/i
 
           exif_info = nil
-          case image_file.downcase
-          when /.jpg\Z/
-              exif_info = EXIFR::JPEG.new(image_file)
-          when /.tiff?\Z/
-              exif_info = EXIFR::TIFF.new(image_file)
-          end
 
-          if not exif_info.nil? && exif_info.exif? then
+          begin
 
-              # example: Mon Apr 02 11:28:26 +1000 2007
-              if exif_info.exif.date_time.to_s =~ /(\w+) (\w+) (\d\d) (\d\d):(\d\d):(\d\d) ([+0-9]+) (\d{4})/
-                  thisdate = Time.local($8, $2, $3, $4, $5, $6)
-                  # p thisdate.to_s + " converted: " + thisdate.strftime("%Y%m%d-%H%M%S")
-                  this_date = thisdate.strftime("%Y%m%d")
-                  if directories_contents.has_key?(this_date)
-                    directories_contents[this_date].push(image_file)
-                  else
-                    p "Now creating directory: #{this_date}"
-                    image_list = Array.new
-                    image_list.push(image_file)
-                    directories_contents[this_date] = image_list
-                  end
-                  #puts "create this directory if not exists: " + thisdate.strftime("%Y%m%d")
+              case image_file.downcase
+              when /.jpg\Z/
+                  exif_info = EXIFR::JPEG.new(image_file)
+              when /.tiff?\Z/
+                  exif_info = EXIFR::TIFF.new(image_file)
               end
-          else
-              puts "No EXIF information in this image"
+
+
+              if not exif_info.nil? && exif_info.exif? then
+
+                  # example: Mon Apr 02 11:28:26 +1000 2007
+                  if exif_info.exif.date_time.to_s =~ /(\w+) (\w+) (\d\d) (\d\d):(\d\d):(\d\d) ([+0-9]+) (\d{4})/
+                      thisdate = Time.local($8, $2, $3, $4, $5, $6)
+                      # p thisdate.to_s + " converted: " + thisdate.strftime("%Y%m%d-%H%M%S")
+                      this_date = thisdate.strftime("%Y%m%d")
+                      if directories_contents.has_key?(this_date)
+                        directories_contents[this_date].push(image_file)
+                      else
+                        p "Now creating directory: #{this_date}"
+                        image_list = Array.new
+                        image_list.push(image_file)
+                        directories_contents[this_date] = image_list
+                      end
+                      #puts "create this directory if not exists: " + thisdate.strftime("%Y%m%d")
+                  end
+              else
+                  puts "No EXIF information in this image"
+              end
+
+          rescue EXIFR::MalformedImage => e
+            puts "MalformedImage error [" + e.to_s + "] on file (check this): " + image_file
           end
+
+
       end
   }
 
