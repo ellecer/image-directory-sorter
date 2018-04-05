@@ -15,17 +15,18 @@ While you don't need to rename the image files, it ensures that their filenames 
 
 You will need to take into account timezone changes for the days where you travel to other countries.
 
-USAGE:
+*USAGE:*
 
 Windows:
-
+```
 ruby image_directory_sorter.rb --target G:/photos_upload
+```
 
 OSX:
-
+```
 ruby image_directory_sorter.rb --target photo_upload
-
---target is the directory containing the image files to sort.
+```
+--target is the directory containing the image files to sort. Specify the full path if the directory is not in your current location. (eg, /Users/myusername/Pictures/photo_upload)
 
 
 
