@@ -5,7 +5,9 @@ Ruby script that will take images and using their EXIF date info, organise them 
 
 Before sorting them into directories, I normally use jhead first to rename the photos based on their EXIF date info.
 
+```
 jhead -n%Y%m%d-%H%M%S *.JPG
+```
 
 You can get jhead at: http://www.sentex.net/~mwandel/jhead/ or install it using homebrew. 
 
