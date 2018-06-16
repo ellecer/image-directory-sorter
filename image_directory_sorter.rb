@@ -1,8 +1,10 @@
 require 'rubygems'
-require 'exifr'
 require 'ostruct'
+require 'exifr/jpeg'
+require 'exifr/tiff'
 require 'optparse'
 require 'ftools'
+require 'fileutils'
 
 
 # from http://rubyforge.org/projects/exifr
@@ -55,7 +57,7 @@ end
 options = get_commandline_options()
 
 target_directory = options.directory
-p target_directory
+p "Now going inside: " + target_directory
 
 Dir.chdir(target_directory)do
  
@@ -63,7 +65,7 @@ Dir.chdir(target_directory)do
   
   Dir["*"].each { |file|
 
- #     p "this file: " + file
+      #p "this file: " + file
       
       image_file = file
 
@@ -82,11 +84,12 @@ Dir.chdir(target_directory)do
 
 
               if not exif_info.nil? && exif_info.exif? then
-
-                  # example: Mon Apr 02 11:28:26 +1000 2007
-                  if exif_info.exif.date_time.to_s =~ /(\w+) (\w+) (\d\d) (\d\d):(\d\d):(\d\d) ([+0-9]+) (\d{4})/
-                      thisdate = Time.local($8, $2, $3, $4, $5, $6)
-                      # p thisdate.to_s + " converted: " + thisdate.strftime("%Y%m%d-%H%M%S")
+                  # p "now parsing exif date:" + exif_info.exif.date_time.to_s
+                  # example: 2013-09-24 20:03:49 +1000
+                   if exif_info.exif.date_time.to_s =~ /(\d{4})-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d) ([+0-9]+)/
+                  
+                      thisdate = Time.local($1, $2, $3, $4, $5, $6)
+                      #p thisdate.to_s + " converted: " + thisdate.strftime("%Y%m%d-%H%M%S")
                       this_date = thisdate.strftime("%Y%m%d")
                       if directories_contents.has_key?(this_date)
                         directories_contents[this_date].push(image_file)
@@ -97,6 +100,8 @@ Dir.chdir(target_directory)do
                         directories_contents[this_date] = image_list
                       end
                       #puts "create this directory if not exists: " + thisdate.strftime("%Y%m%d")
+                  else
+                      puts "EXIF date [" + exif_info.exif.date_time.to_s + "] did not match expected format in: " + image_file
                   end
               else
                   puts "No EXIF information in this image"
@@ -116,7 +121,7 @@ directories_contents.each_pair{ |key,value|
     # create directory
     Dir.mkdir(key) unless File.exist?(key) && File.directory?(key)
     value.each { |image_file| 
-        File.move(image_file, key)    
+        FileUtils.move(image_file, key)    
     }  
 }
 
