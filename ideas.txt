@@ -1,0 +1,4 @@
+TODO
+
+* Go version? One binary to rule them all. :)
+* Handle HEIC files
